@@ -1,0 +1,42 @@
+name: CI
+
+# Runs on every push and pull request: install -> test -> build.
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend - install & test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hash-backend/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: hash-backend/backend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - name: Dependency audit (non-blocking)
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+  frontend:
+    name: Frontend - install & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hash-frontend/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: hash-frontend/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build

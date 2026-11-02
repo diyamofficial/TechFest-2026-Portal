@@ -1,0 +1,19 @@
+<!doctype html>
+<!-- CSRF demo: pretend this is evil-site.com. Open it by double-clicking (origin = "null"),
+     while logged in to your HASH site, with the API running. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>Win a free iPhone!</title></head>
+<body style="font-family:sans-serif;max-width:560px;margin:40px auto">
+  <h1>Click to claim your prize</h1>
+  <p>This page secretly sends a POST request to the HASH API using your logged-in browser.</p>
+  <label>API URL <input id="api" size="42" value="http://localhost:5000/api/feedback"></label>
+  <form id="f" method="POST" enctype="text/plain" target="result">
+    <input type="hidden" name='{"message":"posted by evil-site","ignore":"' value='"}'>
+    <button type="submit" onclick="document.getElementById('f').action=document.getElementById('api').value">Claim prize</button>
+  </form>
+  <p>Server response:</p>
+  <iframe name="result" style="width:100%;height:120px;border:1px solid #888"></iframe>
+  <p>Expected AFTER the fix: <code>403 {"error":"Cross-site request blocked"}</code>
+     (the server compares the request's Origin header with CORS_ORIGIN).</p>
+</body>
+</html>

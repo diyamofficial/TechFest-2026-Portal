@@ -1,0 +1,30 @@
+# Optional Render "Blueprint". You can also create the Web Service by hand in the dashboard.
+services:
+  - type: web
+    name: hash-api
+    runtime: node
+    rootDir: hash-backend/backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true            # redeploys on every push to the connected branch (CD)
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 20
+      - key: MONGODB_URI
+        sync: false             # paste your Atlas string in the dashboard
+      - key: JWT_SECRET
+        generateValue: true     # Render creates a long random value
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false             # your Netlify URL, e.g. https://hash-2026.netlify.app
+      # Option A (recommended): Netlify proxies /api to Render, so the cookie is first-party.
+      - key: COOKIE_SAMESITE
+        value: lax              # use "none" only for Option B (frontend calls Render directly)
+      - key: TRUST_PROXY
+        value: 2                # Netlify proxy + Render; use 1 for Option B
